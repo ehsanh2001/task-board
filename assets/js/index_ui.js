@@ -12,8 +12,14 @@ $("#add-task-btn").click(function () {
     if (!validateInput()) return;
 
     $("#taskDataModal").modal("hide");
+    handleAddTask();
 });
 
+function clearInput() {
+    $("#task-title").val("");
+    $("#task-due-date").val("");
+    $("#task-description").val("");
+}
 function validateInput() {
     if ($("#task-title").val() === "") {
         $("label[for='task-title']").addClass("error");
