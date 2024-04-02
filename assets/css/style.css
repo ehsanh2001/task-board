@@ -1,16 +1,32 @@
 body {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
 }
 
 .swim-lanes {
-  min-height: 60vh;
+    min-height: 60vh;
 }
 
 .task-card {
-  margin: 0 auto;
+    margin: 0 auto;
 }
 
 .task-card:hover {
-  cursor: grab;
+    cursor: grab;
+}
+
+.error {
+    position: relative;
+    display: block;
+}
+
+.error::after {
+    display: block;
+    position: absolute;
+    content: "Please enter a value";
+    color: white;
+    background-color: red;
+    font-size: smaller;
+    top: 15px;
+    left: 80px;
 }
