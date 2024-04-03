@@ -16,10 +16,14 @@ function generateTaskId() {
 }
 
 // Todo: create a function to create a task card
-function colorClassByDueDate(taskDueDate) {
+function cardColorClass(task) {
+    if (task.status == TaskStatus.DONE) {
+        return "card-normal";
+    }
+
     let cardColor = "";
     const todayDate = dayjs();
-    const dueDate = dayjs(taskDueDate, "DD-MM-YYYY");
+    const dueDate = dayjs(task.dueDate, "DD-MM-YYYY");
 
     if (dueDate.isSame(todayDate, "day")) {
         cardColor = "card-today";
@@ -32,12 +36,12 @@ function colorClassByDueDate(taskDueDate) {
 }
 
 function createTaskCard(task) {
-    let cardColorClass, headerColorClass;
-    cardColorClass = colorClassByDueDate(task.dueDate);
-    headerColorClass = cardColorClass + "-header";
+    let colorClass, headerColorClass;
+    colorClass = cardColorClass(task);
+    headerColorClass = colorClass + "-header";
 
     // Card
-    let card = $("<div>").addClass(`card m-2 ${cardColorClass}`);
+    let card = $("<div>").addClass(`card m-2 ${colorClass}`);
     card.attr("draggable", "true");
     card.attr("id", task.id);
     card.attr("ondragstart", "dragStart(event)");
@@ -69,7 +73,6 @@ function createTaskCard(task) {
         .text("Delete")
         .on("click", handleDeleteTask);
     delBtnContainer.append(delBtn);
-
     return card;
 }
 
@@ -152,7 +155,6 @@ function drop(event) {
     }
     // Append the dragged card to the parent container
     if (dropTarget) {
-        dropTarget.appendChild(draggedElement);
         let taskIndex = taskList.findIndex((task) => task.id == id);
         if (dropTarget.id == "todo-cards") {
             taskList[taskIndex].status = TaskStatus.TODO;
@@ -161,6 +163,14 @@ function drop(event) {
         } else {
             taskList[taskIndex].status = TaskStatus.DONE;
         }
+        //the task-cards in Done lane have the background of card-normal regardless of their due date
+        //so when a task-card is dragged from Done or is dropped in Done lane the color MAY change
+        //it's easier to create a new card and remove the old one regardless of the lane.
+        //it's still faster than rendering the whole tasks again
+        let newCard = createTaskCard(taskList[taskIndex]);
+        dropTarget.append(newCard[0]);
+        draggedElement.remove();
+
         localStorage.setItem("tasks", JSON.stringify(taskList));
     }
 }
