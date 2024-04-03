@@ -54,7 +54,8 @@ function createTaskCard(task) {
         .text("Due Date: " + task.dueDate);
     cardBody.append(cardBodyDueDate);
     //////////////////Description Paragraph
-    let cardBodyDescription = $("<p>")
+
+    let cardBodyDescription = $("<pre>")
         .addClass("card-text border rounded p-1")
         .text(task.description);
     cardBody.append(cardBodyDescription);
@@ -65,7 +66,8 @@ function createTaskCard(task) {
     //////////////////////////Delete Button
     let delBtn = $("<button type='button'>")
         .addClass("btn btn-danger")
-        .text("Delete");
+        .text("Delete")
+        .on("click", handleDeleteTask);
     delBtnContainer.append(delBtn);
 
     return card;
@@ -116,7 +118,16 @@ function handleAddTask() {
 }
 
 // Todo: create a function to handle deleting a task
-function handleDeleteTask(event) {}
+function handleDeleteTask(event) {
+    let taskId = event.target.closest("[id]").id;
+    let taskIndex = taskList.findIndex((task) => task.id == taskId);
+    taskList.splice(taskIndex, 1);
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    //renderTaskList();
+    event.target
+        .closest("[id]")
+        .parentElement.removeChild(event.target.closest("[id]"));
+}
 
 // Todo: create a function to handle dropping a task into a new status lane
 // Using html and JS for drag and drop not jQuery
