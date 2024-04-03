@@ -3,7 +3,7 @@ $(function () {
         changeMonth: true,
         changeYear: true,
         showButtonPanel: true,
-        dateFormat: "yy-mm-dd",
+        dateFormat: "dd-mm-yy",
     });
 });
 

@@ -16,39 +16,79 @@ function generateTaskId() {
 }
 
 // Todo: create a function to create a task card
+function colorClassByDueDate(taskDueDate) {
+    let cardColor = "";
+    const todayDate = dayjs();
+    const dueDate = dayjs(taskDueDate, "DD-MM-YYYY");
+    
+    if (dueDate.isSame(todayDate, "day")) {
+        cardColor = "card-today";
+    } else if (dueDate.isAfter(todayDate, "day")) {
+        cardColor = "card-normal";
+    } else {
+        cardColor = "card-late";
+    }
+    return cardColor;
+}
+
 function createTaskCard(task) {
-    const cardColor = "card-late";
-    const headerColor = cardColor + "-header";
+    let cardColorClass, headerColorClass;
+    cardColorClass = colorClassByDueDate(task.dueDate);
+    headerColorClass = cardColorClass + "-header";
 
-    let card = $("<div>").addClass(`card m-2 ${cardColor}`);
+    // Card
+    let card = $("<div>").addClass(`card m-2 ${cardColorClass}`);
 
-    let cardHeader = $("<div>").addClass(`card-header h3 ${headerColor}`);
+    //////////Card Header
+    let cardHeader = $("<div>").addClass(`card-header h3 ${headerColorClass}`);
     cardHeader.text(task.title);
     card.append(cardHeader);
-
+    //////////Card Body
     let cardBody = $("<div>").addClass("card-body text-start");
-    let cardBodyDueDate = $("<p>").addClass("card-text h6").text(task.dueDate);
-    cardBody.append(`Due Date: cardBodyDueDate`);
+    card.append(cardBody);
+    //////////////////Due Date Paragraph
+    let cardBodyDueDate = $("<p>")
+        .addClass("card-text h6")
+        .text("Due Date: " + task.dueDate);
+    cardBody.append(cardBodyDueDate);
+    //////////////////Description Paragraph
     let cardBodyDescription = $("<p>")
         .addClass("card-text border rounded p-1")
         .text(task.description);
     cardBody.append(cardBodyDescription);
-
+    //////////////////Delete Button Container
     //we use a container for delete button to center it on the card
     let delBtnContainer = $("<div>").addClass("text-center");
+    cardBody.append(delBtnContainer);
+    //////////////////////////Delete Button
     let delBtn = $("<button type='button'>")
         .addClass("btn btn-danger")
         .text("Delete");
     delBtnContainer.append(delBtn);
-    cardBody.append(delBtnContainer);
-
-    card.append(cardBody);
 
     return card;
 }
 
 // Todo: create a function to render the task list and make cards draggable
-function renderTaskList() {}
+function renderTaskList() {
+    const todoCards = $("#todo-cards");
+    const inProgressCards = $("#in-progress-cards");
+    const doneCards = $("#done-cards");
+    todoCards.empty();
+    inProgressCards.empty();
+    doneCards.empty();
+
+    for (const task of taskList) {
+        let card = createTaskCard(task);
+        if (task.status === TaskStatus.TODO) {
+            todoCards.append(card);
+        } else if (task.status === TaskStatus.IN_PROGRESS) {
+            inProgressCards.append(card);
+        } else {
+            doneCards.append(card);
+        }
+    }
+}
 
 // Todo: create a function to handle adding a new task
 function Task(title, dueDate, description) {
@@ -70,9 +110,7 @@ function handleAddTask() {
     taskList.push(task);
 
     localStorage.setItem("tasks", JSON.stringify(taskList));
-
-    let card = createTaskCard(task);
-    $("#to-do").append(card);
+    renderTaskList();
 }
 
 // Todo: create a function to handle deleting a task
@@ -82,4 +120,7 @@ function handleDeleteTask(event) {}
 function handleDrop(event, ui) {}
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
-$(document).ready(function () {});
+$(document).ready(function () {
+    dayjs.extend(window.dayjs_plugin_customParseFormat);
+    renderTaskList();
+});
