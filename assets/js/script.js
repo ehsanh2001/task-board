@@ -16,7 +16,36 @@ function generateTaskId() {
 }
 
 // Todo: create a function to create a task card
-function createTaskCard(task) {}
+function createTaskCard(task) {
+    const cardColor = "card-late";
+    const headerColor = cardColor + "-header";
+
+    let card = $("<div>").addClass(`card m-2 ${cardColor}`);
+
+    let cardHeader = $("<div>").addClass(`card-header h3 ${headerColor}`);
+    cardHeader.text(task.title);
+    card.append(cardHeader);
+
+    let cardBody = $("<div>").addClass("card-body text-start");
+    let cardBodyDueDate = $("<p>").addClass("card-text h6").text(task.dueDate);
+    cardBody.append(`Due Date: cardBodyDueDate`);
+    let cardBodyDescription = $("<p>")
+        .addClass("card-text border rounded p-1")
+        .text(task.description);
+    cardBody.append(cardBodyDescription);
+
+    //we use a container for delete button to center it on the card
+    let delBtnContainer = $("<div>").addClass("text-center");
+    let delBtn = $("<button type='button'>")
+        .addClass("btn btn-danger")
+        .text("Delete");
+    delBtnContainer.append(delBtn);
+    cardBody.append(delBtnContainer);
+
+    card.append(cardBody);
+
+    return card;
+}
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {}
@@ -35,12 +64,15 @@ function handleAddTask() {
     let dueDate = $("#task-due-date").val();
     let description = $("#task-description").val();
 
-    clearInput();
+    clearFormInputs();
 
     let task = new Task(title, dueDate, description);
     taskList.push(task);
 
     localStorage.setItem("tasks", JSON.stringify(taskList));
+
+    let card = createTaskCard(task);
+    $("#to-do").append(card);
 }
 
 // Todo: create a function to handle deleting a task

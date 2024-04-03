@@ -15,7 +15,7 @@ $("#add-task-btn").click(function () {
     handleAddTask();
 });
 
-function clearInput() {
+function clearFormInputs() {
     $("#task-title").val("");
     $("#task-due-date").val("");
     $("#task-description").val("");

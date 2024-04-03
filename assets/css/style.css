@@ -30,3 +30,32 @@ body {
     top: 15px;
     left: 80px;
 }
+
+.card-late {
+    background-color: #b30000;
+    color: white;
+}
+
+.card-late-header {
+    background-color: #ff1a1a;
+    color: white;
+}
+
+.card-today {
+    background-color: #e6ac00;
+    color: white;
+}
+
+.card-today-header {
+    background-color: #ffc107;
+    color: white;
+}
+
+.card-normal {
+    background-color: #f1f1f1;
+    color: black;
+}
+.card-noraml-header {
+    background-color: #d9d9d9;
+    color: black;
+}
