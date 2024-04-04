@@ -16,7 +16,7 @@ On the page, you can see the tasks and their progress. The tasks are color-coded
 
 The tasks that are completed are colored grey.
 
-You can drag tasks to other columns.
+You can drag tasks to other columns or change their order by dragging them up or down within the same column. When you drop a task onto another one, it will be added before that task.
 
 ![page image](./assets/images/app-image1.png)
 
