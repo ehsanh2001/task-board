@@ -115,9 +115,8 @@ function handleAddTask() {
 
     let task = new Task(title, dueDate, description);
     taskList.push(task);
-
-    localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTaskList();
+    saveTasks();
 }
 
 // Todo: create a function to handle deleting a task
@@ -125,7 +124,7 @@ function handleDeleteTask(event) {
     let taskId = event.target.closest("[id]").id;
     let taskIndex = taskList.findIndex((task) => task.id == taskId);
     taskList.splice(taskIndex, 1);
-    localStorage.setItem("tasks", JSON.stringify(taskList));
+    saveTasks();
     //renderTaskList();
     event.target
         .closest("[id]")
@@ -149,8 +148,12 @@ function drop(event) {
     let draggedElement = document.getElementById(id);
     let dropTarget = event.target;
 
-    // If drop target is a task card, find its parent container
+    // If drop target is a child of a task card, find its lane container(dropTarget)
+    // siblingCard will be the task card on which the dragged card droped.
+    // so we can add the dropped card before the card it was dropped on not at the end of the lane.
+    let siblingCard = null;
     while (dropTarget && !dropTarget.classList.contains("card-container")) {
+        siblingCard = dropTarget;
         dropTarget = dropTarget.parentElement;
     }
     // Append the dragged card to the parent container
@@ -163,19 +166,39 @@ function drop(event) {
         } else {
             taskList[taskIndex].status = TaskStatus.DONE;
         }
-        //the task-cards in Done lane have the background of card-normal regardless of their due date
-        //so when a task-card is dragged from Done or is dropped in Done lane the color MAY change
+        //the task-cards in Done lane have the background of card-normal regardless of their due date.
+        //so when a task-card is dragged from Done or is dropped in Done lane the color MAY change.
         //it's easier to create a new card and remove the old one regardless of the lane.
         //it's still faster than rendering the whole tasks again
         let newCard = createTaskCard(taskList[taskIndex]);
-        dropTarget.append(newCard[0]);
+        dropTarget.insertBefore(newCard[0], siblingCard);
         draggedElement.remove();
 
-        localStorage.setItem("tasks", JSON.stringify(taskList));
+        saveTasks();
     }
+}
+
+//store task cards based on their order on the lanes
+function saveTasks() {
+    const todoCards = document.getElementById("todo-cards");
+    const inProgressCards = document.getElementById("in-progress-cards");
+    const doneCards = document.getElementById("done-cards");
+
+    let sortedTasksList = [];
+    for (let lane of [todoCards, inProgressCards, doneCards]) {
+        for (let card of lane.childNodes) {
+            let index = taskList.findIndex((task) => task.id == card.id);
+            sortedTasksList.push(taskList[index]);
+        }
+    }
+
+    localStorage.setItem("tasks", JSON.stringify(sortedTasksList));
 }
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
     dayjs.extend(window.dayjs_plugin_customParseFormat);
+    $("#add-task-btn").click(addTaskBtnClicked);
+    $(".form-control").on("change", formControlChange);
     renderTaskList();
+    saveTasks();
 });

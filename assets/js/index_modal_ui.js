@@ -7,13 +7,11 @@ $(function () {
     });
 });
 
-// Add-Task button event handler
-$("#add-task-btn").click(function () {
+function addTaskBtnClicked(){
     if (!validateInput()) return;
-
     $("#taskDataModal").modal("hide");
     handleAddTask();
-});
+}
 
 function clearFormInputs() {
     $("#task-title").val("");
@@ -36,6 +34,6 @@ function validateInput() {
     return true;
 }
 // Remove the error message for required input
-$(".form-control").on("change", (event) => {
+function formControlChange(event){
     $(`label[for='${event.target.id}']`).removeClass("error");
-});
+}
