@@ -124,11 +124,8 @@ function handleDeleteTask(event) {
     let taskId = event.target.closest("[id]").id;
     let taskIndex = taskList.findIndex((task) => task.id == taskId);
     taskList.splice(taskIndex, 1);
+    renderTaskList();
     saveTasks();
-    //renderTaskList();
-    event.target
-        .closest("[id]")
-        .parentElement.removeChild(event.target.closest("[id]"));
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
